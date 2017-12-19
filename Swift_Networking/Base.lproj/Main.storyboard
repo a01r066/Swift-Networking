@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Swift_Networking" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ebN-43-j0X">
+                                <rect key="frame" x="0.0" y="1" width="375" height="222.5"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FML-wL-G0k">
+                                <rect key="frame" x="94" y="238.5" width="187.5" height="30"/>
+                                <state key="normal" title="Flick Image"/>
+                                <connections>
+                                    <action selector="getFlickImage:" destination="BYZ-38-t0r" eventType="touchUpInside" id="8RX-bz-6vv"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Photo Title" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t12-CT-MRk">
+                                <rect key="frame" x="46.5" y="36" width="281" height="38.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="32"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4OS-P6-Pwz">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="223"/>
+                                <color key="backgroundColor" white="1" alpha="0.25" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="4OS-P6-Pwz" firstAttribute="height" secondItem="ebN-43-j0X" secondAttribute="height" id="171-Qb-fix"/>
+                            <constraint firstItem="t12-CT-MRk" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="300-wH-Yh0"/>
+                            <constraint firstItem="ebN-43-j0X" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="GVV-nB-qRU"/>
+                            <constraint firstItem="4OS-P6-Pwz" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="HHJ-fv-wf8"/>
+                            <constraint firstItem="FML-wL-G0k" firstAttribute="top" secondItem="ebN-43-j0X" secondAttribute="bottom" constant="16" id="LX5-Sb-pTW"/>
+                            <constraint firstItem="FML-wL-G0k" firstAttribute="width" secondItem="ebN-43-j0X" secondAttribute="width" multiplier="1/2" id="TIV-Q6-oBg"/>
+                            <constraint firstItem="FML-wL-G0k" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="TPY-E3-NBl"/>
+                            <constraint firstItem="4OS-P6-Pwz" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="TtW-jr-KeC"/>
+                            <constraint firstItem="4OS-P6-Pwz" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Vzu-Dg-lwG"/>
+                            <constraint firstItem="ebN-43-j0X" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="gbX-Cz-AfD"/>
+                            <constraint firstItem="ebN-43-j0X" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="1/3" id="ifA-Hz-tnF"/>
+                            <constraint firstItem="ebN-43-j0X" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="lwp-Dq-h1B"/>
+                            <constraint firstItem="t12-CT-MRk" firstAttribute="width" secondItem="ebN-43-j0X" secondAttribute="width" multiplier="3/4" id="mFG-Tg-ecG"/>
+                            <constraint firstItem="t12-CT-MRk" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="16" id="rpJ-yI-yre"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                    </view>
+                    <connections>
+                        <outlet property="flickIv" destination="ebN-43-j0X" id="JLe-p1-nMG"/>
+                        <outlet property="grabImageBt" destination="FML-wL-G0k" id="sli-pg-jB6"/>
+                        <outlet property="titleLbl" destination="t12-CT-MRk" id="hvd-ej-IBz"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="140" y="115.59220389805098"/>
+        </scene>
+    </scenes>
+</document>
