@@ -58,4 +58,9 @@ struct Constants {
         static let Pages = "pages"
         static let Total = "total"
     }
+    
+    // MARK: Flickr Response Values
+    struct FlickrResponseValues {
+        static let OKStatus = "ok"
+    }
 }
