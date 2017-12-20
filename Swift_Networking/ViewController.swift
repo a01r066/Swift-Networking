@@ -44,6 +44,7 @@ class ViewController: UIViewController {
         }
     }
     
+    // MARK: - Get image by default
     @IBAction func getFlickImage(_ sender: Any) {
         let methodParameters = [
             Constants.FlickrParameterKeys.Method: Constants.FlickrParameterValues.GalleryPhotosMethod,
@@ -133,40 +134,77 @@ class ViewController: UIViewController {
         task.resume()
     }
     
-    @IBAction func searchByText(_ sender: Any) {
-//        var components = URLComponents()
-//        components.scheme = Constants.Flickr.APIScheme
-//        components.host = Constants.Flickr.APIHost
-//        components.path = Constants.Flickr.APIPath
-//
-//        // Initialize queryItems
-//        components.queryItems = [URLQueryItem]()
-//
-//        let queryItem1 = URLQueryItem(name: Constants.FlickrParameterKeys.Method, value: Constants.FlickrParameterValues.SearchMethod)
-//        let queryItem2 = URLQueryItem(name: Constants.FlickrParameterKeys.APIKey, value: Constants.FlickrParameterValues.APIKey)
-//        let queryItem3 = URLQueryItem(name: Constants.FlickrParameterKeys.Text, value: searchTf.text)
-//        let queryItem4 = URLQueryItem(name: Constants.FlickrParameterKeys.Format, value: Constants.FlickrParameterValues.ResponseFormat)
-//        let queryItem5 = URLQueryItem(name: Constants.FlickrParameterKeys.Extras, value: Constants.FlickrParameterValues.MediumURL)
-//
-//        components.queryItems?.append(queryItem1)
-//        components.queryItems?.append(queryItem2)
-//        components.queryItems?.append(queryItem3)
-//        components.queryItems?.append(queryItem4)
-//        components.queryItems?.append(queryItem5)
-//
-//        print("By URLComponents: ", components.url!)
-        let searchParams = [
-            Constants.FlickrParameterKeys.SafeSearch:Constants.FlickrParameterValues.UseSafeSearch,
-            Constants.FlickrParameterKeys.Text:searchTf.text ?? "",
-            Constants.FlickrParameterKeys.Extras:Constants.FlickrParameterValues.MediumURL,
-            Constants.FlickrParameterKeys.APIKey:Constants.FlickrParameterValues.APIKey,
-            Constants.FlickrParameterKeys.Method:Constants.FlickrParameterValues.SearchMethod,
-            Constants.FlickrParameterKeys.Format:Constants.FlickrParameterValues.ResponseFormat,
-            Constants.FlickrParameterKeys.NoJSONCallback:Constants.FlickrParameterValues.DisableJSONCallback
-            ] as [String : AnyObject]
+    // MARK: - Prepage display image with page number
+    func displayImage(parameters: [String:AnyObject]){
+        let url = flickrURLFromParameters(parameters)
+        print("Default URL: ", url)
         
-        let url = flickrURLFromParameters(searchParams)
-        print(url)
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        let session = URLSession.shared
+        
+        // create network request
+        let task = session.dataTask(with: request) { (data, response, error) in
+            
+            /* GUARD: Was there an error? */
+            guard (error == nil) else {
+                self.displayError("There was an error with your request: \(error?.localizedDescription ?? "")")
+                return
+            }
+            
+            /* GUARD: Did we get a successful 2XX response? */
+            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
+                self.displayError("Your request returned a status code other than 2xx!")
+                return
+            }
+            
+            /* GUARD: Was there any data returned? */
+            guard let data = data else {
+                self.displayError("No data was returned by the request!")
+                return
+            }
+            
+            // parse the data
+            let parsedResult: [String:AnyObject]!
+            do {
+                parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:AnyObject]
+            } catch {
+                self.displayError("Could not parse the data as JSON: '\(data)'")
+                return
+            }
+            
+            /* GUARD: Did Flickr return an error (stat != ok)? */
+            guard let stat = parsedResult[Constants.FlickrResponseKeys.Status] as? String, stat == Constants.FlickrResponseValues.OKStatus else {
+                self.displayError("Flickr API returned an error. See error code and message in \(parsedResult)")
+                return
+            }
+            
+            /* GUARD: Are the "photos" and "photo" keys in our result? */
+            guard let photosDictionary = parsedResult[Constants.FlickrResponseKeys.Photos] as? [String:AnyObject], let photoArray = photosDictionary[Constants.FlickrResponseKeys.Photo] as? [[String:AnyObject]] else {
+                self.displayError("Cannot find keys '\(Constants.FlickrResponseKeys.Photos)' and '\(Constants.FlickrResponseKeys.Photo)' in \(parsedResult)")
+                return
+            }
+            
+            guard let totalPages = photosDictionary["pages"] as? Int else { return }
+           
+            // Pick a random page
+            let pagesLimit = min(totalPages, 40)
+            let randomPageIndex = Int(arc4random_uniform(UInt32(pagesLimit)) + 1)
+            
+            self.displayImagePageNumber(parameters: parameters, withPageNumber: randomPageIndex)
+        }
+        
+        // start the task!
+        task.resume()
+    }
+    
+    func displayImagePageNumber(parameters: [String:AnyObject], withPageNumber: Int){
+        var parametersWithPageNumber = parameters
+        parametersWithPageNumber[Constants.FlickrParameterKeys.Page] = withPageNumber as AnyObject
+        
+        let url = flickrURLFromParameters(parametersWithPageNumber)
+        print("URL with page: ", url)
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -238,13 +276,25 @@ class ViewController: UIViewController {
                 self.displayError("Image does not exist at \(imageURL)")
             }
         }
-        
         // start the task!
         task.resume()
     }
     
-    // MARK: Helper for Creating a URL from Parameters
+    @IBAction func searchByText(_ sender: Any) {
+        let searchParams = [
+            Constants.FlickrParameterKeys.SafeSearch: Constants.FlickrParameterValues.UseSafeSearch,
+            Constants.FlickrParameterKeys.Text: searchTf.text ?? "",
+            Constants.FlickrParameterKeys.Extras: Constants.FlickrParameterValues.MediumURL,
+            Constants.FlickrParameterKeys.APIKey: Constants.FlickrParameterValues.APIKey,
+            Constants.FlickrParameterKeys.Method: Constants.FlickrParameterValues.SearchMethod,
+            Constants.FlickrParameterKeys.Format: Constants.FlickrParameterValues.ResponseFormat,
+            Constants.FlickrParameterKeys.NoJSONCallback: Constants.FlickrParameterValues.DisableJSONCallback
+            ] as [String : AnyObject]
+        
+         displayImage(parameters: searchParams)
+    }
     
+    // MARK: Helper for Creating a URL from Parameters (URLComponents)
     private func flickrURLFromParameters(_ parameters: [String:AnyObject]) -> URL {
         
         var components = URLComponents()
